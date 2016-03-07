@@ -1,11 +1,18 @@
 {
-  "name": "io-global"
-  , "author": "dingdong"
-  , "version": "0.0.1"
-  , "description": "dingdong自用开发变量的集合 最常用io.c(),表console.log()"
-  , "license": "MIT"
-  , "repository": {
-    "type": "git"
-    , "url": "https://github.com/dingdong-io/item-lite"
+  "name": "io-global",
+  "author": "dingdong",
+  "version": "0.0.1",
+  "description": "dingdong自用开发变量的集合 最常用io.c(),表console.log()",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dingdong-io/io-global.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dingdong-io/io-global/issues"
+  },
+  "homepage": "https://github.com/dingdong-io/io-global#readme",
+  "main": "main.js",
+  "scripts": {
   }
 }
