@@ -2,9 +2,15 @@
 
 var io = {}
   , fs = require('fs')
+,nodePath = require('path')
 
 io.c = console.log.bind(console)
 io.c('引入了io.js,为全局变量的集合,详参io.prototype.description')
+
+var cwd = function(){
+  return process.cwd().replace(/\\/g,'/')+'/'
+}
+
 
 var isDir = function (sFile) {
     var t = false;
@@ -56,11 +62,15 @@ var isJs = function (sFile) {
 
 
 //io.path作用,1.路径的反斜杠改为斜杠(为windows);2.若是文件夹且末位无"/",加上"/";3.智能判断忽略.js后缀的写法; 4.
+//待加入 type,绝对相对 逻辑 x/y/z/../ = x/y/ 用来地址相加
 var pathT = {}
 //只用一个参数,次参数是内部回调用的,表人为添加了.js后缀
+
 var path = function (sFile,isIAddLastJs) {
     var oFile = {}
-    sFile = sFile.replace(/\\/g, '/')
+    sFile = nodePath.normalize(sFile) //包括了'./'处理为空,多斜杠转单, 还有最麻烦的, '../'中和掉前一段/xx/路径
+      .replace(/\\/g, '/') //反斜杠转正
+
     var t = isDir(sFile)
     if (t === true) {
       oFile.dir = sFile
@@ -68,7 +78,8 @@ var path = function (sFile,isIAddLastJs) {
         //与node自有模块path.dirname(只返父级)不同,如果是目录,这里将完全返给dir
         oFile.dir += '/'
       }
-    } else if (t === 'ENOENT') {
+    }
+  else if (t === 'ENOENT') {
       if(isIAddLastJs){
         oFile = pathT
         oFile.error = 'ENOENT'
@@ -90,10 +101,16 @@ var path = function (sFile,isIAddLastJs) {
       oFile.name = RegExp.$2
     }
   oFile.all = oFile.dir+ (oFile.name?oFile.name:'')
+
+  oFile.type = /^\//.test(sFile) || /\:\//.test(sFile) ? 'absolute' : 'relative'
+
 //  io.c(oFile)
   return oFile
       //返回值如下oFile={"dir":"C:/x/x/","name":"x.js","all":"C:/x/x/x.js","error":"ENOENT"}
   }
+//io.c(path('/x1/x2/x3/../../common/1').all) //触发1.js
+//io.c(path('/x1/x2/x3/../../common/1').all) //触发1.js
+//io.c(path('F:/x1/.////x2/../../../../..//x3/common'))
 
 //node中prototype不是默认建立的?
 io.prototype = Object.create(require('events').EventEmitter.prototype);
@@ -105,6 +122,7 @@ io.prototype.description = {
   , isDir: "io.isDir(str) 智能判断是路径还是文件; 返回值都有三种,true(文件夹),false(文件),和'ENOENT'(未找到) 由于'ENOENT'的存在,推荐用===比对,避免if(isDir(str))的判断"
   , isJs: "io.isJs(str);isJs函数,判断当前目录下有没有x.js文件,包括隐藏.js后缀的写法;结果两种,true,false(找不到也归为false)"
   , isExist: "文件(夹)是否存在"
+  ,"dirname":"__dirname+'/'"
   , path: "io.path作用,类似于node系统模块path.parse:1.路径的反斜杠改为斜杠(为windows); "
 }
 
@@ -117,6 +135,7 @@ io = {
   , isJs: isJs
   , isExist: isExist
   , path: path
+  , cwd:cwd
 };
 
 module.exports = global.io = io

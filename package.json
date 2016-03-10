@@ -1,7 +1,7 @@
 {
   "name": "io-global",
   "author": "dingdong",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "dingdong自用开发变量的集合 最常用io.c(),表console.log()",
   "license": "MIT",
   "repository": {
@@ -12,7 +12,7 @@
     "url": "https://github.com/dingdong-io/io-global/issues"
   },
   "homepage": "https://github.com/dingdong-io/io-global#readme",
-  "main": "main.js",
+  "main": "io.js",
   "scripts": {
   }
 }
