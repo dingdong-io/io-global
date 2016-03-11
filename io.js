@@ -122,7 +122,7 @@ io.prototype.description = {
   , isDir: "io.isDir(str) 智能判断是路径还是文件; 返回值都有三种,true(文件夹),false(文件),和'ENOENT'(未找到) 由于'ENOENT'的存在,推荐用===比对,避免if(isDir(str))的判断"
   , isJs: "io.isJs(str);isJs函数,判断当前目录下有没有x.js文件,包括隐藏.js后缀的写法;结果两种,true,false(找不到也归为false)"
   , isExist: "文件(夹)是否存在"
-  ,"dirname":"__dirname+'/'"
+  ,"cwd":"process.cwd() 反斜杠转正,末尾+斜杠,__dirname是当前运行的js文件,而cwd可以定位到正在处理的文件,因此cwd更灵活"
   , path: "io.path作用,类似于node系统模块path.parse:1.路径的反斜杠改为斜杠(为windows); "
 }
 
