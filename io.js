@@ -5,7 +5,7 @@ var io = {}
 ,nodePath = require('path')
 
 io.c = console.log.bind(console)
-io.c('引入了io.js,为全局变量的集合,详参io.prototype.description')
+io.c('引入了io.js,集合了常用的开发变量,详参io.API')
 
 var cwd = function(){
   return process.cwd().replace(/\\/g,'/')+'/'
@@ -113,9 +113,12 @@ var path = function (sFile,isIAddLastJs) {
 //io.c(path('F:/x1/.////x2/../../../../..//x3/common'))
 
 //node中prototype不是默认建立的?
-io.prototype = Object.create(require('events').EventEmitter.prototype);
+//io.prototype = Object.create(require('events').EventEmitter.prototype);
+//var obj = {}
+//console.log(obj.__proto__ === Object.prototype) //true
+//修改__proto__的影响太大了.require('io-global')后,接下来定义的对象都带__proto__,这对for of等遍历简直是灾难性的
 
-io.prototype.description = {
+var API = {
   c: "io.c(str) console.log"
   , ce: "io.ce(str) console.error()"
   , project: "io.project={} ,io原则上不在其他js文件中做修改,所以暴露一个供修改的,这个对象主要根据不同的站点需要设置不同的全局而留下的(注意隔离这些生效的场景)"
@@ -123,12 +126,24 @@ io.prototype.description = {
   , isJs: "io.isJs(str);isJs函数,判断当前目录下有没有x.js文件,包括隐藏.js后缀的写法;结果两种,true,false(找不到也归为false)"
   , isExist: "文件(夹)是否存在"
   ,"cwd":"process.cwd() 反斜杠转正,末尾+斜杠,__dirname是当前运行的js文件,而cwd可以定位到正在处理的文件,因此cwd更灵活"
-  , path: "io.path作用,类似于node系统模块path.parse:1.路径的反斜杠改为斜杠(为windows); "
-}
+  , path: "io.path作用,类似于node系统模块path.parse:1.路径的反斜杠改为斜杠(为windows);2.智能判断文件夹或路径,若是文件夹末位保持"/";3.智能判断忽略.js后缀的写法; 返回值有以下属性:dir,name,all,error,"
+  }
 
-//io各属性方法,参io.prototype.description
+//io.__proto__.API = {
+//  c: "io.c(str) console.log"
+//  , ce: "io.ce(str) console.error()"
+//  , project: "io.project={} ,io原则上不在其他js文件中做修改,所以暴露一个供修改的,这个对象主要根据不同的站点需要设置不同的全局而留下的(注意隔离这些生效的场景)"
+//  , isDir: "io.isDir(str) 智能判断是路径还是文件; 返回值都有三种,true(文件夹),false(文件),和'ENOENT'(未找到) 由于'ENOENT'的存在,推荐用===比对,避免if(isDir(str))的判断"
+//  , isJs: "io.isJs(str);isJs函数,判断当前目录下有没有x.js文件,包括隐藏.js后缀的写法;结果两种,true,false(找不到也归为false)"
+//  , isExist: "文件(夹)是否存在"
+//  ,"cwd":"process.cwd() 反斜杠转正,末尾+斜杠,__dirname是当前运行的js文件,而cwd可以定位到正在处理的文件,因此cwd更灵活"
+//  , path: "io.path作用,类似于node系统模块path.parse:1.路径的反斜杠改为斜杠(为windows); "
+//}
+
+//io各属性方法,参io.API
 io = {
-  c: console.log.bind(console)
+  API:API
+  ,c: console.log.bind(console)
   , ce: console.error.bind(console)
   , project: {}
   , isDir: isDir
@@ -136,6 +151,9 @@ io = {
   , isExist: isExist
   , path: path
   , cwd:cwd
+
 };
 
+//io.c(io)
+//当前的使用方法require即可,无需赋值给io变量,若A.js引用io.js,B引用A,全局io将穿透A,在B中可直接调用
 module.exports = global.io = io
